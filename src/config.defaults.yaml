@@ -1,0 +1,44 @@
+oidc:
+  # issuerUri: process.env.OIDC_ISSUERURI,
+  # client_id: process.env.OIDC_CLIENTID,
+  # client_secret: process.env.OIDC_CLIENTSECRET,
+  # redirect_uri: http://localhost:3000/oidc/callback
+  scopes: openid profile email offline_access
+  successful_redirect: http://localhost:3000/headers
+
+# https://github.com/expressjs/cookie-session
+cookie:
+  name: nightswatch,
+  keys:
+    - 'process.env.COOKIE_KEY'
+  maxAge: 24h
+targets:
+  default: http://httpbin.com
+storage:
+  kind: InMemory
+  specs:
+    stdTTL: 24h
+server:
+  port: 3000
+  # http://expressjs.com/en/guide/behind-proxies.html
+  # loopback - 127.0.0.1/8, ::1/128
+  # linklocal - 169.254.0.0/16, fe80::/10
+  # uniquelocal - 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, fc00::/7
+  proxy:
+    - loopback
+    - linklocal
+    - uniquelocal
+relying_party:
+  headers:
+    prefix: RP
+    proxy:
+      access-token: tokenset.access_token
+      id-token: tokenset.id_token
+      expires-at: tokenset.expires_at
+      expires-in: tokenset.expires_in
+      sub: profile.sub
+      name: profile.name
+      email: profile.email
+      roles: profile.roles
+      family-name: profile.family_name
+      given-name: profile.given_name

@@ -4,7 +4,7 @@ const cors = require('cors');
 const pino = require('pino')();
 const pinoExpress = require('pino-express');
 const cookieSession = require('cookie-session');
-
+const helmet = require('helmet');
 const revProxy = require('./middlewares/rev-roxy');
 const authenticateBuidler = require('./middlewares/authenticate');
 const passport = require('passport');
@@ -30,9 +30,10 @@ prepareServer(app).then(() => {
 });
 
 async function prepareServer(app) {
-  app.use(pinoExpress(pino));
-
+  app.set('trust proxy', config.server.proxy);
+  app.use(helmet());
   app.use(cors({}));
+  app.use(pinoExpress(pino));
   app.use(cookieSession(config.cookie));
   app.use(passport.initialize());
 
@@ -71,7 +72,6 @@ async function prepareServer(app) {
   app.use(
     revProxy({
       target: target,
-      headers: require(`${__dirname}/../header_inject`),
       router,
       pathRewrite,
     })

@@ -1,15 +1,61 @@
 const parse = require('parse-duration');
-module.exports = {
-  oidc: {
-    issuerUri: process.env.OIDC_ISSUERURI,
-    client_id: process.env.OIDC_CLIENTID,
-    client_secret: process.env.OIDC_CLIENTSECRET,
-  },
-  cookie: {
-    name: process.env.COOKIE_NAME,
-    keys: [process.env.COOKIE_KEY],
+const yaml = require('js-yaml');
+const fs = require('fs');
+const set = require('lodash.set');
+const get = require('lodash.get');
+const merge = require('lodash.merge');
+const debug = require('debug')('nightswatch:conf');
 
-    // Cookie Options
-    maxAge: parse(process.env.COOKIE_MAXAGE || '24h'), // 24 hours
-  },
-};
+const defaultsConfig = yaml.safeLoad(
+  fs.readFileSync('./src/config.defaults.yaml', 'utf8')
+);
+const userConf =
+  fs.existsSync(process.env.CONFIG_FILE || './config.yaml') &&
+  yaml.safeLoad(
+    fs.readFileSync(process.env.CONFIG_FILE || './config.yaml', 'utf8')
+  );
+
+function configurator(...configurations) {
+  const extConfs = {};
+  merge(extConfs, ...configurations);
+  /**
+   *
+   * @param {string} propPath property path cookie.maxAge
+   */
+  function envOverride(propPath) {
+    const propENV = propPath.replace('.', '__').toUpperCase();
+    if (process.env[propENV]) {
+      set(extConfs, propPath, process.env[propENV]);
+    }
+  }
+  function required(propPath) {
+    if (!get(extConfs, propPath)) {
+      throw Error(`${propPath} is required!`);
+    }
+  }
+
+  envOverride('oidc.issuerUri');
+  required('oidc.issuerUri');
+  envOverride('oidc.client_id');
+  required('oidc.client_id');
+  envOverride('oidc.client_secret');
+  required('oidc.client_secret');
+  envOverride('oidc.redirect_uri');
+  envOverride('oidc.scopes');
+
+  envOverride('cookie.name');
+  envOverride('cookie.keys');
+  envOverride('cookie.maxAge');
+  required('oidc.client_secret');
+  envOverride('targets.upstream');
+
+  envOverride('server.port');
+  envOverride('server.proxy');
+  envOverride('storage.kind');
+  envOverride('storage.specs.stdTTL');
+
+  debug(extConfs);
+  return extConfs;
+}
+
+module.exports = configurator(defaultsConfig, userConf);

@@ -1,5 +1,5 @@
 const ProxyMiddleware = require('http-proxy-middleware');
-const log = require('pino')();
+const log = require('pino')({ level: 'debug' });
 const passport = require('passport');
 const { Issuer, Strategy } = require('openid-client');
 
@@ -21,22 +21,39 @@ async function authenticate(options) {
     client_id: oidc.client_id,
     client_secret: oidc.client_secret,
   });
-  const userCache = {};
 
   passport.use(
     'openid',
     new Strategy(
-      { client, passReqToCallback: true, usePKCE: false },
+      {
+        client,
+        passReqToCallback: true,
+        usePKCE: false,
+        params: {
+          scope: config.oidc.scopes,
+          redirect_uri: config.oidc.redirect_uri,
+        },
+      },
       function verifyCallback(req, tokenset, userinfo, done) {
-        //log.debug('verify callback', { tokenset, userinfo });
-        req.session.oidc = sessionStore.push({ tokenset, userinfo });
+        log.debug('verify callback', {
+          tokenset,
+          userinfo,
+          profile: tokenset.claims(),
+        });
+        req.session.oidc = sessionStore.push(
+          {
+            tokenset,
+            userinfo,
+            profile: tokenset.claims(),
+          },
+          tokenset.ext_expires_in
+        );
         done(null, { tokenset, userinfo });
       }
     )
   );
   const passportAuthorize = passport.authorize('openid', {
     successRedirect: '/headers',
-    scope: 'email openid profile offline_access',
   });
 
   return function(req, res, next) {

@@ -1,13 +1,18 @@
 const NodeCache = require('node-cache');
 const shortId = require('shortid');
-const userCache = new NodeCache({ stdTTL: 24 * 3600, checkperiod: 120 });
+const config = require('./conf');
+const userCache = new NodeCache({
+  stdTTL: config.storage.specs.stdTTL,
+  checkperiod: 120,
+  deleteOnExpire: true,
+});
 
-function save(id, session) {
-  userCache.set(id, session);
+function save(id, session, ttl = config.storage.specs.stdTTL) {
+  userCache.set(id, session, ttl);
   return id;
 }
-function push(session) {
-  return save(shortId(), session);
+function push(session, ttl) {
+  return save(shortId(), session, ttl);
 }
 function find(id) {
   return id ? userCache.get(id) : undefined;
