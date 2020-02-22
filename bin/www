@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+const debug = require('debug')('nightswatch:boot');
+
+require('dotenv').config({});
+// getting-started.js
+
+(async function boot() {
+  // const {} = process.env;
+  try {
+    // await something
+    // debug('✅ mongodb %s', `mongodb://${MONGO_USER}:...@${MONGO_URL}`);
+  } catch (err) {
+    debug('💥 ops', err);
+    throw err;
+  }
+  // eslint-disable-next-line global-require
+  require('../src/index');
+})();

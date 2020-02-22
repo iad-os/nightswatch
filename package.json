@@ -1,7 +1,7 @@
 {
-  "name": "pre-auth-tester",
+  "name": "nightswatch",
   "version": "1.0.0",
-  "description": "Aggiunge gli header di Autenticazione",
+  "description": "Night's Watch, the OIDC Relying Party that guards the realms",
   "main": "index.js",
   "scripts": {
     "start": "nodemon ./src/index.js",
@@ -9,8 +9,16 @@
     "dev": "DEBUG=* nodemon --inspect-brk ./src/index.js | pino-pretty",
     "debug": "node --inspect-brk ./src/index.js | pino-pretty"
   },
-  "author": "Daniele Fiungo (dfiungo@iad2.it)",
-  "license": "ISC",
+  "readmeFilename": "README.md",
+  "author": {
+    "name": "Daniele Fiungo",
+    "email": "danielefiungo@gmail.com"
+  },
+  "engines": {
+    "node": ">=12",
+    "npm": ">=6.4.1"
+  },
+  "license": "MIT",
   "dependencies": {
     "body-parser": "^1.19.0",
     "cookie-session": "^1.4.0",
@@ -19,27 +27,25 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "helmet": "^3.21.2",
-    "http-proxy-middleware": "^0.20.0",
+    "http-proxy-middleware": "^1.0.0",
+    "http-status": "^1.4.2",
     "js-yaml": "^3.13.1",
-    "lodash": "^4.17.15",
     "lodash.get": "^4.4.2",
     "lodash.map": "^4.6.0",
     "lodash.merge": "^4.6.2",
     "lodash.set": "^4.3.2",
     "node-cache": "^5.1.0",
-    "node-http-proxy-json": "^0.1.9",
     "openid-client": "^3.13.0",
     "parse-duration": "^0.1.2",
     "passport": "^0.4.1",
     "pino": "^5.16.0",
     "pino-express": "^1.1.1",
-    "shortid": "^2.2.15",
-    "winston": "^3.2.1"
+    "shortid": "^2.2.15"
   },
   "devDependencies": {
-    "@types/pino": "^5.15.4",
+    "@types/pino": "^5.15.5",
     "nodemon": "^2.0.2",
-    "pino-pretty": "^3.5.0",
+    "pino-pretty": "^3.6.0",
     "prettier": "1.19.1"
   }
 }

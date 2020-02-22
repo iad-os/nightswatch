@@ -35,11 +35,6 @@ async function authenticate(options) {
         },
       },
       function verifyCallback(req, tokenset, userinfo, done) {
-        log.debug('verify callback', {
-          tokenset,
-          userinfo,
-          profile: tokenset.claims(),
-        });
         req.session.oidc = sessionStore.push(
           {
             tokenset,

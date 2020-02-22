@@ -4,33 +4,42 @@ oidc:
   # client_secret: process.env.OIDC_CLIENTSECRET,
   # redirect_uri: http://localhost:3000/oidc/callback
   scopes: openid profile email offline_access
-  successful_redirect: http://localhost:3000/headers
 
 # https://github.com/expressjs/cookie-session
 cookie:
   name: nightswatch,
   keys:
-    - 'process.env.COOKIE_KEY'
+    - a_reandom_secret
   maxAge: 24h
 targets:
-  default: http://httpbin.com
+  default:
+    # mount: /**
+    upstream: http://httpbin.com
 storage:
   kind: InMemory
   specs:
     stdTTL: 24h
 server:
+  max_body_limit: '100k'
   port: 3000
+  
+  proxy:
   # http://expressjs.com/en/guide/behind-proxies.html
   # loopback - 127.0.0.1/8, ::1/128
   # linklocal - 169.254.0.0/16, fe80::/10
   # uniquelocal - 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, fc00::/7
-  proxy:
     - loopback
     - linklocal
     - uniquelocal
 relying_party:
+  on_success_redirect: /
+  on_fail_redirect: /
+  oidc_base_path: /oidc
+  oidc_paths:
+    login: /login
+    callback: /callback
   headers:
-    prefix: RP
+    prefix: X-AUTH
     proxy:
       access-token: tokenset.access_token
       id-token: tokenset.id_token

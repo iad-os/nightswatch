@@ -1,4 +1,4 @@
-const parse = require('parse-duration');
+const duration = require('parse-duration');
 const yaml = require('js-yaml');
 const fs = require('fs');
 const set = require('lodash.set');
@@ -17,7 +17,7 @@ const userConf =
 
 function configurator(...configurations) {
   const extConfs = {};
-  merge(extConfs, ...configurations);
+
   /**
    *
    * @param {string} propPath property path cookie.maxAge
@@ -34,6 +34,16 @@ function configurator(...configurations) {
     }
   }
 
+  function humanToMillis(propPath) {
+    const humanValue = get(extConfs, propPath);
+    if (humanValue) {
+      set(extConfs, propPath, duration(humanValue));
+    }
+    return;
+  }
+
+  merge(extConfs, ...configurations);
+
   envOverride('oidc.issuerUri');
   required('oidc.issuerUri');
   envOverride('oidc.client_id');
@@ -46,6 +56,7 @@ function configurator(...configurations) {
   envOverride('cookie.name');
   envOverride('cookie.keys');
   envOverride('cookie.maxAge');
+  humanToMillis('cookie.maxAge');
   required('oidc.client_secret');
   envOverride('targets.upstream');
 
