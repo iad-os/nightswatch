@@ -1,5 +1,5 @@
 # Stage-1 dependencies
-FROM mhart/alpine-node:12 as dep
+FROM mhart/alpine-node:12 as deps
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --prod
@@ -8,9 +8,10 @@ RUN npm ci --prod
 FROM mhart/alpine-node:slim-12
 # Create app directory
 WORKDIR /app
-COPY --from=dep /app .
+COPY --from=deps /app .
 # Bundle app source
 COPY . .
 EXPOSE 3000
-ENTRYPOINT [ "node", "bin/www" ]
+ENTRYPOINT [ "node", "src/index.js" ]
+
 

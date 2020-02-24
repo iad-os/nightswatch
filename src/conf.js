@@ -58,12 +58,28 @@ function configurator(...configurations) {
   envOverride('cookie.maxAge');
   humanToMillis('cookie.maxAge');
   required('oidc.client_secret');
+
   envOverride('targets.upstream');
 
-  envOverride('server.port');
-  envOverride('server.proxy');
   envOverride('storage.kind');
   envOverride('storage.specs.stdTTL');
+
+  envOverride('server.port');
+  envOverride('server.max_body_limit');
+  envOverride('server.proxy');
+  envOverride('server.max_header_size');
+  envOverride('server.healthcheck.readiness');
+  envOverride('server.healthcheck.liveness');
+  envOverride('server.healthcheck.timeout');
+  humanToMillis('server.healthcheck.timeout');
+
+  envOverride('relying_party.on_success_redirect');
+  envOverride('relying_party.on_fail_redirect');
+  envOverride('relying_party.oidc_base_path');
+  envOverride('relying_party.oidc_paths.login');
+  envOverride('relying_party.oidc_paths.callback');
+  envOverride('relying_party.headers.prefix');
+  //TBC   envOverride('relying_party.headers.proxy');
 
   debug(extConfs);
   return extConfs;

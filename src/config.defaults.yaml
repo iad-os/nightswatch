@@ -1,8 +1,8 @@
 oidc:
-  # issuerUri: process.env.OIDC_ISSUERURI,
-  # client_id: process.env.OIDC_CLIENTID,
-  # client_secret: process.env.OIDC_CLIENTSECRET,
-  # redirect_uri: http://localhost:3000/oidc/callback
+  # issuerUri: process.env.OIDC__ISSUERURI,
+  # client_id: process.env.OIDC__CLIENTID,
+  # client_secret: process.env.OIDC__CLIENT_SECRET,
+  # redirect_uri: process.env.OIDC__REDIRECT_URI,
   scopes: openid profile email offline_access
 
 # https://github.com/expressjs/cookie-session
@@ -20,9 +20,9 @@ storage:
   specs:
     stdTTL: 24h
 server:
-  max_body_limit: '100k'
+  max_body_limit: 100k
   port: 3000
-  
+  max_header_size: 8192
   proxy:
   # http://expressjs.com/en/guide/behind-proxies.html
   # loopback - 127.0.0.1/8, ::1/128
@@ -31,6 +31,10 @@ server:
     - loopback
     - linklocal
     - uniquelocal
+  healthchecks:
+    readiness: /healthcheck/ready
+    liveness:  /healthcheck
+    timeout: 2s
 relying_party:
   on_success_redirect: /
   on_fail_redirect: /
