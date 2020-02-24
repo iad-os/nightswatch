@@ -1,9 +1,15 @@
-const {createProxyMiddleware} = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const get = require('lodash.get');
 const log = require('pino')({ level: 'debug' });
 const map = require('lodash.map');
 const { relying_party } = require('../conf');
-
+/**
+ *
+ * @param {Object} options
+ * @param {String} options.target
+ * @param {Object} [options.router]
+ * @param {Object} [options.pathRewrite]
+ */
 function revProxy({ target, router, pathRewrite }) {
   const proxy_options = {
     target,
@@ -32,7 +38,7 @@ function revProxy({ target, router, pathRewrite }) {
   function proxyHeaders(req, oidc) {
     const { prefix, proxy } = relying_party.headers;
     return map(proxy, function(value, name) {
-      return [`${prefix}-${name}`, get(oidc, value,'')];
+      return [`${prefix}-${name}`, get(oidc, value, '')];
     });
   }
 

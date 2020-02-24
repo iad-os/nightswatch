@@ -13,12 +13,6 @@ const config = require('./conf');
 const oidcRouter = require('./routers/oidc');
 const healthchecks = require('./healthcheck');
 
-const {
-  target,
-  router,
-  pathRewrite,
-} = require(`${__dirname}/../routing_rules`);
-
 const app = express();
 
 async function prepareServer(app) {
@@ -40,9 +34,7 @@ async function prepareServer(app) {
     '/**',
     authenticate,
     revProxy({
-      target: target,
-      router,
-      pathRewrite,
+      target: config.targets.default.upstream
     })
   );
 }
@@ -57,8 +49,7 @@ prepareServer(app).then(() => {
   server.listen(port, function() {
     pino.info({
       server: { port },
-      //headers_injected: require(`${__dirname}/../header_inject`),
-      routing: require(`${__dirname}/../routing_rules`),
+      routing: config.targets,
     });
   });
 });

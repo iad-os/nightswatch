@@ -14,7 +14,7 @@ cookie:
 targets:
   default:
     # mount: /**
-    upstream: http://httpbin.com
+    upstream: http://httpbin.org
 storage:
   kind: InMemory
   specs:
