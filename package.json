@@ -35,6 +35,7 @@
     "lodash.map": "^4.6.0",
     "lodash.merge": "^4.6.2",
     "lodash.set": "^4.3.2",
+    "lodash.tonumber": "^4.0.3",
     "node-cache": "^5.1.0",
     "openid-client": "^3.13.0",
     "parse-duration": "^0.1.2",

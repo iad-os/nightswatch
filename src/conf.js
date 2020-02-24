@@ -4,6 +4,7 @@ const fs = require('fs');
 const set = require('lodash.set');
 const get = require('lodash.get');
 const merge = require('lodash.merge');
+const toNum = require('lodash.tonumber');
 const debug = require('debug')('nightswatch:conf');
 
 const defaultsConfig = yaml.safeLoad(
@@ -39,9 +40,37 @@ function configurator(...configurations) {
     if (humanValue) {
       set(extConfs, propPath, duration(humanValue));
     }
-    return;
   }
 
+  function toBoolean(propPath) {
+    const stringValue = get(extConfs, propPath);
+    switch (stringValue) {
+      case true:
+      case 'true':
+      case 1:
+      case '1':
+      case 'on':
+      case 'yes':
+        set(extConfs, propPath, true);
+        break;
+      default:
+        set(extConfs, propPath, false);
+    }
+  }
+
+  function toNumber(propPath) {
+    const stringValue = get(extConfs, propPath);
+    set(extConfs, propPath, toNum(stringValue));
+  }
+
+  function inRange(propPath, min, max) {
+    const numberValue = get(extConfs, propPath);
+    if (min >= numberValue || max <= numberValue) {
+      throw Error(
+        `${propPath} [${numberValue}] is out of allowed range ${min} <-> ${max}!`
+      );
+    }
+  }
   merge(extConfs, ...configurations);
 
   envOverride('oidc.issuerUri');
@@ -64,7 +93,12 @@ function configurator(...configurations) {
   envOverride('storage.kind');
   envOverride('storage.specs.stdTTL');
 
-  envOverride('server.port');
+  envOverride('server.http.enable');
+  toBoolean('server.http.enable');
+  envOverride('server.http.port');
+  toNumber('server.http.port');
+  inRange('server.http.port', 1, Math.pow(2, 16) - 1);
+
   envOverride('server.max_body_limit');
   envOverride('server.proxy');
   envOverride('server.max_header_size');

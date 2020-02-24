@@ -20,20 +20,26 @@ storage:
   specs:
     stdTTL: 24h
 server:
-  max_body_limit: 100k
-  port: 3000
+  # max_body_limit: 100k
+  http:
+    enable: true
+    port: 3000
+  https:
+    enable: false
+    port: 3001
+  https_port:
   max_header_size: 8192
   proxy:
-  # http://expressjs.com/en/guide/behind-proxies.html
-  # loopback - 127.0.0.1/8, ::1/128
-  # linklocal - 169.254.0.0/16, fe80::/10
-  # uniquelocal - 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, fc00::/7
+    # http://expressjs.com/en/guide/behind-proxies.html
+    # loopback - 127.0.0.1/8, ::1/128
+    # linklocal - 169.254.0.0/16, fe80::/10
+    # uniquelocal - 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, fc00::/7
     - loopback
     - linklocal
     - uniquelocal
   healthchecks:
     readiness: /healthcheck/ready
-    liveness:  /healthcheck
+    liveness: /healthcheck
     timeout: 2s
 relying_party:
   on_success_redirect: /

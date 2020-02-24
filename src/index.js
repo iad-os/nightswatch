@@ -1,4 +1,5 @@
 require('dotenv').config({});
+const debug = require('debug')('nightswatch:run')
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
@@ -34,22 +35,26 @@ async function prepareServer(app) {
     '/**',
     authenticate,
     revProxy({
-      target: config.targets.default.upstream
+      target: config.targets.default.upstream,
     })
   );
 }
 
 prepareServer(app).then(() => {
-  const port = config.server.port;
-  const server = http.createServer(
-    { maxHeaderSize: config.server.max_header_size || 8192 },
-    app
-  );
-  healthchecks(server);
-  server.listen(port, function() {
-    pino.info({
-      server: { port },
-      routing: config.targets,
+  if (config.server.http.enable) {
+    const port = config.server.http.port;
+    const server = http.createServer(
+      { maxHeaderSize: config.server.max_header_size || 8192 },
+      app
+    );
+    healthchecks(server);
+    server.listen(port, function() {
+      pino.info({
+        server: { port },
+        routing: config.targets,
+      });
     });
-  });
+  }else{
+    debug('No server config found or enabled')
+  }
 });
