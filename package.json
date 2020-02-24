@@ -4,9 +4,9 @@
   "description": "Night's Watch, the OIDC Relying Party that guards the realms",
   "main": "src/index.js",
   "scripts": {
-    "start": "nodemon ./src/index.js",
+    "start": "node ./src/index.js",
     "log": "npm start | pino-pretty",
-    "dev": "DEBUG=* nodemon --inspect-brk ./src/index.js | pino-pretty",
+    "dev": "cross-env DEBUG=* nodemon --inspect-brk ./src/index.js | pino-pretty",
     "debug": "node --inspect-brk ./src/index.js | pino-pretty"
   },
   "readmeFilename": "README.md",
@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "@types/pino": "^5.15.5",
+    "cross-env": "^7.0.0",
     "nodemon": "^2.0.2",
     "pino-pretty": "^3.6.0",
     "prettier": "1.19.1"

@@ -1,5 +1,5 @@
 require('dotenv').config({});
-const debug = require('debug')('nightswatch:run')
+const debug = require('debug')('nightswatch:run');
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
@@ -31,13 +31,13 @@ async function prepareServer(app) {
     cookie: config.cookie,
   });
 
-  app.all(
-    '/**',
-    authenticate,
-    revProxy({
-      target: config.targets.default.upstream,
-    })
-  );
+  config.relying_party.rules.forEach(({ route, methods = ['all'] }) => {
+    methods.forEach(method => {
+      app[method](route, authenticate);
+    });
+  });
+
+  app.all(config.targets.path, revProxy(config.targets));
 }
 
 prepareServer(app).then(() => {
@@ -54,7 +54,7 @@ prepareServer(app).then(() => {
         routing: config.targets,
       });
     });
-  }else{
-    debug('No server config found or enabled')
+  } else {
+    debug('No server config found or enabled');
   }
 });
