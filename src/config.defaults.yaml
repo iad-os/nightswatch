@@ -58,6 +58,7 @@ relying_party:
     - route: /**
       methods:
         - all
+  logLevel: error
   headers:
     prefix: X-AUTH
     proxy:

@@ -37,7 +37,7 @@ function revProxy({ upstream, routes = [], rewrite = [] }) {
       return acc;
     }, {}),
     // control logging
-    logLevel: 'debug',
+    logLevel: relying_party.logLevel || 'error',
     router: routes.reduce((acc, route) => {
       acc[route.path] = route.upstream;
       return acc;

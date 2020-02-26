@@ -1,0 +1,10 @@
+version: '3'
+services: 
+  nightswatch:
+    image: iad2os/nightswatch
+    volumes: 
+      - ./config.yaml:/app/config.yaml
+    environment: 
+      CONFIG_FILE: ./config.yaml
+    ports:
+      - 3000:3000
