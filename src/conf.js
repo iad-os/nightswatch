@@ -24,9 +24,18 @@ function configurator(...configurations) {
    * @param {string} propPath property path cookie.maxAge
    */
   function envOverride(propPath) {
+    let value;
     const propENV = propPath.replace('.', '__').toUpperCase();
     if (process.env[propENV]) {
-      set(extConfs, propPath, process.env[propENV]);
+      value = process.env[propENV];
+    } else if (process.env[`${propENV}_0`]) {
+      value = [];
+      while (process.env[`${propENV}_${value.length}`]) {
+        value.push(process.env[`${propENV}_${value.length}`]);
+      }
+    }
+    if (value) {
+      set(extConfs, propPath, value);
     }
   }
   function required(propPath) {
