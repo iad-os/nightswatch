@@ -16,7 +16,23 @@ const userConf =
     fs.readFileSync(process.env.CONFIG_FILE || './config.yaml', 'utf8')
   );
 
+/**
+ * @typedef {Object} OIDCConfig
+ * @property {string} issuerUri OIDC issuer uri
+ */
+
+/**
+ * @typedef {Object} NightsWatchConfig
+ * @property {OIDCConfig} oidc
+ */
+
+/**
+ *
+ * @param  {...any} configurations
+ * @returns  {NightsWatchConfig} configs
+ */
 function configurator(...configurations) {
+
   const extConfs = {};
 
   /**
