@@ -1,9 +1,8 @@
 oidc:
-  issuerUri: https://axid.iadm.tk/auth/realms/nightswatch,
-  client_id: 1min-access-token,
-  client_secret: 1d637db8-7485-4129-8810-fd1d9bcf524c,
-  redirect_uri: http://localhost:3000/oidc/callback,
-  scopes: openid profile email offline_access
+  issuerUri: https://axid.iadm.tk/auth/realms/nightswatch
+  client_id: 1min-access-token
+  client_secret: 1d637db8-7485-4129-8810-fd1d9bcf524c
+  redirect_uri: http://localhost:3000/oidc/callback
 
 # https://github.com/expressjs/cookie-session
 cookie:
@@ -14,12 +13,12 @@ cookie:
 targets:
   path: /**
   upstream: http://httpbin.org
-  routes:
-    - path: /_dev
-      upstream: http://httpbin.org
-  rewrite:
-    - match: ^/_dev
-      rewrite: '/headers'
+  routes: []
+  #  - path: /_dev
+  #    upstream: http://httpbin.org
+  rewrite: []
+  #  - match: ^/_dev
+  #    rewrite: '/headers'
 
 storage:
   kind: InMemory
@@ -58,6 +57,7 @@ relying_party:
     - route: /**
       methods:
         - all
+  logLevel: error
   headers:
     prefix: X-AUTH
     proxy:
