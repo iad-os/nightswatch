@@ -1,10 +1,24 @@
-version: '3'
-services: 
+version: '3.4'
+services:
   nightswatch:
     image: iad2os/nightswatch
-    volumes: 
+    volumes:
       - ./config-simple.yaml:/app/config.yaml
-    environment: 
+    environment:
+      DEBUG: nightswatch:*
       CONFIG_FILE: ./config.yaml
     ports:
       - 3000:3000
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'wget',
+          '--quiet',
+          '--spider',
+          'http://localhost:3000/healthcheck',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s

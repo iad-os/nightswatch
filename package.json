@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node ./src/index.js",
-    "log": "npm start | pino-pretty",
-    "dev": "cross-env DEBUG=* nodemon --inspect-brk ./src/index.js | pino-pretty",
+    "start-pretty": "npm start | pino-pretty",
+    "dev": "cross-env DEBUG=* nodemon --inspect ./src/index.js | pino-pretty",
     "debug": "node --inspect-brk ./src/index.js | pino-pretty"
   },
   "readmeFilename": "README.md",
