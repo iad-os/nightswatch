@@ -45,6 +45,7 @@
     "shortid": "^2.2.15"
   },
   "devDependencies": {
+    "@types/cookie-session": "^2.0.38",
     "@types/pino": "^5.15.5",
     "cross-env": "^7.0.0",
     "nodemon": "^2.0.2",

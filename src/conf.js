@@ -20,10 +20,28 @@ const userConf =
  * @typedef {Object} OIDCConfig
  * @property {string} issuerUri OIDC issuer uri
  */
+/**
+ * @typedef {Object} Cookie 
+ * @property {string} name
+ * @property { string[]} keys  
+ * @property {number | string} maxAge
+ * 
+ */
+
+ /**
+  * @typedef {Object} Targets
+  * @property {string} path
+  * @property {string} upstream
+  * @property {string[]} routes 
+  * @property {string[]} rewrite 
+  */
+
 
 /**
  * @typedef {Object} NightsWatchConfig
  * @property {OIDCConfig} oidc
+ * @property {CookieSessionInterfaces.CookieSessionOptions} cookie
+ * @property {Object} targets
  */
 
 /**
