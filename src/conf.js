@@ -114,10 +114,10 @@ const userConf =
  * @typedef {Object} NightsWatchConfig
  * @property {OIDCConfig} oidc
  * @property {CookieSessionInterfaces.CookieSessionOptions} cookie
- * @property {Object} targets
- * @property {Object} storage
- * @property {Object} server
- * @property {Object} relying_party
+ * @property {Targets} targets
+ * @property {Storage} storage
+ * @property {Server} server
+ * @property {Relying_party} relying_party
  */
 
 /**
@@ -133,6 +133,7 @@ function configurator(...configurations) {
    *
    * @param {string} propPath property path cookie.maxAge
    */
+
   function envOverride(propPath) {
     let value;
     const propENV = propPath.replace('.', '__').toUpperCase();
