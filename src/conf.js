@@ -23,7 +23,7 @@ const userConf =
 /**
  * @typedef {Object} Cookie 
  * @property {string} name
- * @property { string[]} keys  
+ * @property {string[]} keys  
  * @property {number | string} maxAge
  * 
  */
@@ -36,12 +36,88 @@ const userConf =
   * @property {string[]} rewrite 
   */
 
+  /**
+   *@typedef {Object} Specs 
+   * @property {string} stdTTL
+   */
 
+  /**
+   * 
+   * @typedef {Object} Storage
+   * @property {string} kind
+   * @property {Object} specs
+   */
+ 
+   /**
+    * 
+    * @typedef {Object} Http 
+    * @property {boolean} enable 
+    * @property {number} port
+    */
+
+    /**
+     * @typedef {Object} Https
+    * @property {boolean} enable 
+    * @property {number} port
+     */
+
+    /**
+      * @typedef {Object} Healthchecks
+      * @property {string} readiness 
+      * @property {string} liveness
+      * @property {string} timeout
+      */
+
+   /**
+    * 
+    * @typedef {Object} Server 
+    * @property {Object} http
+    * @property {Object} https
+    * @property {number} max_header_size
+    * @property {string[]} proxy
+    * @property {Object} healthchecks
+    */
+
+    /**
+     *  @typedef {Object} Oidc_paths
+     * @property {string} login
+     * @property {string} callback
+     */
+
+  
+     /**
+     * @typedef {Object | Array} Rules
+     * @property {string} route 
+     * @property {string[]} methods 
+     */
+
+    /**
+     * 
+     * @typedef {Object} Headers 
+     * @property {string} prefix
+     * @property { {[x: string]: string; access_token?:string}} proxy
+     */
+
+    /**
+     * 
+     * @typedef {Object} Relying_party
+     * @property {string} on_success_redirect
+     * @property {string} on_fail_redirect
+     * @property {string} oidc_base_path
+     * @property {Object} oidc_paths
+     * @property {Object|Array} rules
+     * @property {string} logLevel
+     * @property {Object} headers
+     * 
+     */
 /**
  * @typedef {Object} NightsWatchConfig
  * @property {OIDCConfig} oidc
  * @property {CookieSessionInterfaces.CookieSessionOptions} cookie
  * @property {Object} targets
+ * @property {Object} storage
+ * @property {Object} server
+ * @property {Object} relying_party
  */
 
 /**
