@@ -11,11 +11,11 @@ const sessionStore = require('../sessionStore');
  *
  * @param {object} options
  * @param {object} options.oidc
- * @param {object} options.cookie
+ //* @param {object} options.cookie
  * @returns
  */
 async function authenticate(options) {
-  const { oidc, cookie: cookieSettings } = options;
+  const { oidc } = options;
   const issuer = await Issuer.discover(oidc.issuerUri);
   const client = new issuer.FAPIClient({
     client_id: oidc.client_id,
@@ -39,7 +39,7 @@ async function authenticate(options) {
           {
             tokenset,
             userinfo,
-            profile: tokenset.claims(),
+            idtoken: tokenset.claims(),
           },
           tokenset.ext_expires_in
         );

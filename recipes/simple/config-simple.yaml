@@ -65,8 +65,8 @@ relying_party:
       id-token: tokenset.id_token
       expires-at: tokenset.expires_at
       expires-in: tokenset.expires_in
-      sub: profile.sub
-      name: profile.name
-      email: profile.email
-      family-name: profile.family_name
-      given-name: profile.given_name
+      sub: idtoken.sub
+      name: idtoken.name
+      email: idtoken.email
+      family-name: idtoken.family_name
+      given-name: idtoken.given_name

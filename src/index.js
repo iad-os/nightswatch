@@ -24,6 +24,7 @@ async function prepareServer(app) {
   app.use(cookieSession(config.cookie));
   app.use(passport.initialize());
 
+  // mount oidc routes on path (DEFAULT/oidc)
   app.use(config.relying_party.oidc_base_path, oidcRouter);
 
   const authenticate = await authenticateBuilder({
