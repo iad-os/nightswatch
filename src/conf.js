@@ -7,6 +7,113 @@ const merge = require('lodash.merge');
 const toNum = require('lodash.tonumber');
 const debug = require('debug')('nightswatch:conf');
 
+/**
+ * @typedef {Object} OIDCConfig
+ * @property {string} issuerUri OIDC issuer uri
+ * @property {string} client_id
+ * @property {string} client_secret
+ * @property {string} redirect_uri
+ * @property {string} [scopes="openid profile email offline_access"]
+ */
+/**
+ * @typedef {Object} Cookie
+ * @property {string} [name="nightswatch"]
+ * @property {string[]} keys
+ * @property {number | string} maxAge
+ *
+ */
+
+/**
+ * @typedef {Object} Targets
+ * @property {string} path
+ * @property {string} upstream
+ * @property {string[]} routes
+ * @property {string[]} rewrite
+ */
+
+/**
+ *@typedef {Object} Specs
+ * @property {string} stdTTL
+ */
+
+/**
+ *
+ * @typedef {Object} Storage
+ * @property {string} kind
+ * @property {Object} specs
+ */
+
+/**
+ *
+ * @typedef {Object} Http
+ * @property {boolean} enable
+ * @property {number} port
+ */
+
+/**
+ * @typedef {Object} Https
+ * @property {boolean} enable
+ * @property {number} port
+ */
+
+/**
+ * @typedef {Object} Healthchecks
+ * @property {string} readiness
+ * @property {string} liveness
+ * @property {string} timeout
+ */
+
+/**
+ *
+ * @typedef {Object} Server
+ * @property {Object} http
+ * @property {Object} https
+ * @property {number} max_header_size
+ * @property {string[]} proxy
+ * @property {Object} healthchecks
+ */
+
+/**
+ *  @typedef {Object} Oidc_paths
+ * @property {string} login
+ * @property {string} callback
+ */
+
+/**
+ * @typedef {Object | Array} Rules
+ * @property {string} route
+ * @property {string[]} methods
+ */
+
+/**
+ *
+ * @typedef {Object} Headers
+ * @property {string} prefix
+ * @property { {[x: string]: string; access_token?:string}} proxy
+ */
+
+/**
+ *
+ * @typedef {Object} Relying_party
+ * @property {string} on_success_redirect
+ * @property {string} on_fail_redirect
+ * @property {string} oidc_base_path
+ * @property {Object} oidc_paths
+ * @property {Object|Array} rules
+ * @property {string} logLevel
+ * @property {Object} headers
+ *
+ */
+/**
+ * @typedef {Object} NightsWatchConfig
+ * @property {OIDCConfig} [oidc]
+ * @property {CookieSessionInterfaces.CookieSessionOptions} [cookie]
+ * @property {Targets} [targets]
+ * @property {Storage} [storage]
+ * @property {Server} [server]
+ * @property {Relying_party} [relying_party]
+ */
+
 const defaultsConfig = yaml.safeLoad(
   fs.readFileSync('./src/config.defaults.yaml', 'utf8')
 );
@@ -16,13 +123,21 @@ const userConf =
     fs.readFileSync(process.env.CONFIG_FILE || './config.yaml', 'utf8')
   );
 
-function configurator(...configurations) {
-  const extConfs = {};
-
+/**
+ * @param  {NightsWatchConfig} defaultsConfig
+ * @param  {...NightsWatchConfig} configurations
+ * @returns  {NightsWatchConfig} configs
+ */
+function configurator(defaultsConfig, ...configurations) {
+  /**
+   * @type NightsWatchConfig
+   */
+  const extConfs = merge({}, defaultsConfig, ...configurations);
   /**
    *
    * @param {string} propPath property path cookie.maxAge
    */
+
   function envOverride(propPath) {
     let value;
     const propENV = propPath.replace('.', '__').toUpperCase();
@@ -80,7 +195,6 @@ function configurator(...configurations) {
       );
     }
   }
-  merge(extConfs, ...configurations);
 
   envOverride('oidc.issuerUri');
   required('oidc.issuerUri');
@@ -129,3 +243,4 @@ function configurator(...configurations) {
 }
 
 module.exports = configurator(defaultsConfig, userConf);
+module.exports.configurator = configurator;
