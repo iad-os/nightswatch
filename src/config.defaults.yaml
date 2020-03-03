@@ -55,9 +55,15 @@ relying_party:
     login: /login
     callback: /callback
   rules:
+    - route: /admin/**
+      methods: 
+        - get
+        - post
+        - delete
     - route: /**
       methods:
-        - all
+        - post
+
   logLevel: error
   headers:
     prefix: X-AUTH
