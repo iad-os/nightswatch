@@ -2,7 +2,7 @@
 	<img  src="./logo.png" alt="Night's Watch Logo">
 	<hr>
 	<h2>
-		The OIDC Relying Party guarding the realms
+		The OIDC Relying Party that guards the realms
 	</h2>
 	<hr>
 </div>
@@ -178,7 +178,7 @@ $ cp /src/config.default.yaml ./config.yaml
 
 Use your own editor to configure Night's Watch the way you need it, then run it with `npm start` or `npm run start-pretty`.
 
-If not overridden, the CONFIG_FILE is set to `./config.yaml` by default and the guardians of the wall will try to read your configuration from `config.yaml` in the current folder.
+If not overridden, the CONFIG_FILE is set to `./config.yaml` by default and Night's Watch will try to read your configuration from `config.yaml` in the current folder.
 
 ### 🐳 Run with Docker
 
