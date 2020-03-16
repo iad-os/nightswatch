@@ -23,7 +23,7 @@
 
 ## Configuration
 
-The following content is the default configuration and can be used to create your own `Night's Watch` configuration.
+The following is the default configuration; you can use it to create your own `Night's Watch` configuration.
 
 ```yaml
 oidc:
@@ -103,11 +103,11 @@ relying_party:
       given-name: idtoken.given_name
 ```
 
-All of the options can be provided as ENVIRONMENT variables following this rule:
+All of the options can be provided as ENVIRONMENT variables by applying this rule:
 
 `replace('.', '__').toUpperCase()`
 
-to set the headers prefix passed to the upstream that is configurable through config.yaml
+In order to set the HTTP headers prefixes that we're going to send to the upstream, we can use the config.yaml file:
 
 ```yaml
 relying_party:
@@ -115,9 +115,10 @@ relying_party:
     prefix: X-AUTH
 ```
 
-a variable named `RELYING_PARTY__HEADERS__PREFIX` should be set.
+A variable named `RELYING_PARTY__HEADERS__PREFIX` could also be set, instead.
 
-The only required configuration or variables are:
+
+The mandatory configuration part is the following:
 
 With a _config.minimal.yaml_
 
@@ -134,7 +135,7 @@ targets:
   upstream: http://httpbin.org
 ```
 
-otherwise you can use a _.env file or environment variables_
+and here is its alternative, through a _.env file or environment variables:_ 
 
 ```shell
 OIDC__ISSUERURI=https://issuer.castle_black.com
@@ -156,32 +157,32 @@ You can run Night's Watch in different scenarios:
 
 ### Run with node
 
-Night's Watch is developed using NodeJS 12, check your installed version with `node --version` or install it from the official website.
+Night's Watch is developed using NodeJS 12; check your installed version with `node --version` or install it from the official website.
 
-Once checked node version clone the repository:
+Once you have checked the node version, you can go ahead and clone the repository:
 
 ```shell
 $ git clone https://github.com/iad-os/nightswatch.git
 ```
 
-then run `npm install` to download dependencies and finally `npm start` or instead `npm run start-pretty` for a pretty console logging.
+next, run `npm install` to download dependencies and, finally, finally `npm start` or `npm run start-pretty`, for a prettier console logging.
 
-In order to pass environment variable a `.env` file can be created in the checkout folder otherwise variables can be passed running the command like this:
+In order to pass environment variables, a `.env` file can be created in the checkout folder; otherwise, they can be passed with this npm start command:
 `CONFIG_FILE=./recipes/simple/config.simple.yaml npm run start`.
 
-If you prefer is possible to use yaml configuration:
+It is also possible to use a .yaml configuration:
 
 ```shell
 $ cp /src/config.default.yaml ./config.yaml
 ```
 
-Use your own text editor to configure Night's Watch on your need's, then run with `npm start` or instead `npm run start-pretty`.
+Use your own editor to configure Night's Watch the way you need it, then run it with `npm start` or `npm run start-pretty`.
 
-If not overridden CONFIG_FILE is set to `./config.yaml` by default and Night's Watch will try to read your configuration from `config.yaml` in the current folder.
+If not overridden, the CONFIG_FILE is set to `./config.yaml` by default and Night's Watch will try to read your configuration from `config.yaml` in the current folder.
 
 ### 🐳 Run with Docker
 
-The official docker image is available from Docker Hub [iad2os/nightswatch](https://) and can be executed with the following command:
+The official Night's Watch docker image is available at Docker Hub [iad2os/nightswatch](https://) and can be executed with the following command:
 
 ```shell
 $ docker run \
@@ -196,7 +197,7 @@ iad2os/nightswatch
 
 ```
 
-a volume mount or a .env file can also be user modifying the docker run as follow
+a volume mount or a .env file can also be used modifying the `docker run` as follows:
 
 (with volumes)
 
@@ -220,7 +221,7 @@ iad2os/nightswatch
 
 ### 🐳 Run with Docker Compose
 
-Let's start creating a docker compose file, in this example scenario we will secure with Night's Watch http://httpbin.org that will become handy when we'll verify if everything works as expected.
+Let's start creating a docker compose file, in this example scenario we will make http://httpbin.org safe with the aid of the Night's Watch. This will come in handy later, while verifying that everything works as expected.
 
 ```yaml
 version: '3.4'
@@ -251,11 +252,11 @@ services:
 
 ## Configure Authorization Headers
 
-With Night's Watch you can customize easily the headers passed to the Resource Server (a.k.a. your application).
+With Night's Watch you can easily customize the headers passed to the Resource Server (in other words, your application).
 
-For each request Night's Watch add some headers that a resource server may consume to bind the identity an other details too handle request.
+For each request, Night's Watch will add some headers that a resource server may consume to bind the identity and other details needed to handle such request.
 
-The defaults header is and is configured with:
+Here is the default headers and its configuration:
 
 ```yaml
 relying_party
@@ -273,15 +274,15 @@ relying_party
       given-name: idtoken.given_name
 ```
 
-you can configure your own headers and decide which will be passed to the upstream.
+you can configure your own headers and decide what to send to the upstream, north of the Wall!
 
-Every request comes with 3 objects
+Every request comes with 3 objects:
 
 - [The Token Set claims](#the-token-set-claims)
 - [The UserInfo claims](#the-userinfo-claims)
 - [The IdToken claims](#the-idtoken-claims)
 
-This is an json example:
+here is a JSON example:
 
 ```json
 {
@@ -328,15 +329,16 @@ This is an json example:
 }
 ```
 
-### Example of: Adding a custom Header
+### Adding a custom Header (sample)
 
-I.E. you can add an header named `X-AUTH-ROLES` which represent user roles using the environment variable:
+For instance, you could add a header named `X-AUTH-ROLES`, representing user roles.
+using an environment variable:
 
 ```shell
 RELYING_PARTY__HEADERS_PROXY_ROLES=idtoken.roles
 ```
 
-or with config.yaml
+using config.yaml
 
 ```yaml
 relying_party
@@ -346,7 +348,7 @@ relying_party
       roles: idtoken.roles
 ```
 
-⚠️ IdToken may be different from an issuer to an other and which claim is included can be configured. Please refer to your IDP documentation.
+⚠️ IdToken may differ between issuer; which claim to include can also be configured. Please refer to your IDP documentation.
 
 ### The Token Set claims
 
@@ -358,7 +360,7 @@ token_type: <string>
 id_token: <string>
 refresh_token: <string>
 expires_in: <number>
-expires_at: <number> Access token expiration timestamp, represented as the number of seconds sincthe epoch (January 1, 1970 00:00:00 UTC).
+expires_at: <number> Access token expiration timestamp, formed by the number of seconds since the epoch (January 1, 1970 00:00:00 UTC).
 session_state: <string>
 other properties may be present and they'll be passthrough available on the TokenSet instance
 ```
@@ -378,15 +380,15 @@ tokenset
  scope: openid offline_access email profile
 ```
 
-for more details check official documentation about TokenSet object at [panva/node-openid-client](https://github.com/panva/node-openid-client/blob/master/docs/README.md#class-tokenset).
+for more details, check the official TokenSet documentation at [panva/node-openid-client](https://github.com/panva/node-openid-client/blob/master/docs/README.md#class-tokenset).
 
 ### The UserInfo claims
 
-The UserInfo object will contain the claims defined by the OIDC standards, and this can change from one OIDC Provider to another. If you also control the OIDC provider check the documentation to configure what claims are included in the UserInfo endpoint.
+The UserInfo object contains the claims defined by the OIDC standards, and this can change between OIDC providers. If you also control the OIDC provider, consult the documentation to configure what claims are included in the UserInfo endpoint.
 More info about UserInfo and standard claims can be found at [OIDC Specs - User Info](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo)
 [OIDC Specs - Standard Claims](https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims)
 
-This is an example of UserInfo object:
+This is an UserInfo object example:
 
 ```yaml
 userinfo:
@@ -401,10 +403,10 @@ userinfo:
 
 ### The IdToken claims
 
-Even if is present serialized and signed with JWT in the `tokenset.id_token`, the root level `idtoken` object contains the same content but as an object.
-With this object it will be more handy to use the claim in the headers.
+Even though you have a serialized and JWT-signed id_token located at the `tokenset.id_token` level, the root-level `idtoken` object contains the same content but, indeed, as an object.
+With this, it will be more convenient to handle claims in the headers..
 
-This is an example of `idtoken` object:
+Here is an example of `idtoken` object:
 
 ```yaml
 idtoken:
@@ -427,4 +429,4 @@ idtoken:
   email: theoldbear@castle_black.com
 ```
 
-Check official docs: [OIDC Specs](https://openid.net/specs/openid-connect-core-1_0.html#IDToken)
+Check out the official OIDC docs: [OIDC Specs](https://openid.net/specs/openid-connect-core-1_0.html#IDToken)
