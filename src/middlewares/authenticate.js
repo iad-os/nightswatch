@@ -48,7 +48,7 @@ async function authenticate(options) {
     )
   );
   const passportAuthorize = passport.authorize('openid', {
-    successRedirect: '/headers',
+    successRedirect: '/',
   });
 
   return function(req, res, next) {
@@ -56,10 +56,12 @@ async function authenticate(options) {
 
     if (!userSession) {
       req.session.oidc = undefined;
-      passportAuthorize(req, res, next);
+      passportAuthorize(req, res, (...args) => {
+        req.oidc = sessionStore.find(req.session.oidc);
+        next(...args);
+      });
       return;
     }
-
     req.oidc = userSession;
     next();
   };
