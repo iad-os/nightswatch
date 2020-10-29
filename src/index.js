@@ -19,7 +19,7 @@ const app = express();
 async function prepareServer(app) {
   app.set('trust proxy', config.server.proxy);
   app.use(helmet());
-  app.use(cors({}));
+  app.use(cors({ credentials: true }));
   app.use(pinoExpress(pino));
   app.use(cookieSession(config.cookie));
   app.use(passport.initialize());
