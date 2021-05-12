@@ -1,8 +1,8 @@
-const { createTerminus } = require('@godaddy/terminus');
-const debug = require('debug')('nightswatch:healtcheck');
-const {
-  server: { healthchecks },
-} = require('./conf');
+import { createTerminus } from '@godaddy/terminus';
+import debugLib from 'debug';
+const debug = debugLib('nightswatch:healtcheck');
+
+import options from './config/options';
 
 async function onSignal() {
   debug('server is starting cleanup');
@@ -22,15 +22,16 @@ function healthCheck() {
     ();
 }
 
-module.exports = function enableHealthchecks(server) {
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+function enableHealthchecks(server: any): void {
   createTerminus(server, {
     // health check options
     healthChecks: {
-      [healthchecks.readiness]: healthCheck, // a function returning a promise indicating service health,
-      [healthchecks.liveness]: healthCheck,
+      [options.snapshot().server.healthchecks.readiness]: healthCheck, // a function returning a promise indicating service health,
+      [options.snapshot().server.healthchecks.liveness]: healthCheck,
     },
     // cleanup options
-    timeout: 1000, // [optional = 1000] number of milliseconds before forceful exiting
+    timeout: options.snapshot().server.healthchecks.timeout || 1000, // [optional = 1000] number of milliseconds before forceful exiting
     //signal, // [optional = 'SIGTERM'] what signal to listen for relative to shutdown
     //signals, // [optional = []] array of signals to listen for relative to shutdown
     //beforeShutdown, // [optional] called before the HTTP server starts its shutdown
@@ -41,4 +42,6 @@ module.exports = function enableHealthchecks(server) {
     // both
     //logger, // [optional] logger function to be called with errors
   });
-};
+}
+
+export default enableHealthchecks;

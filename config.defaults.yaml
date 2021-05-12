@@ -10,7 +10,7 @@ cookie:
   name: nightswatch
   keys:
     - you_know_nothing_jon_snow
-  maxAge: 24h
+  maxAge: 86400 #24h
 targets:
   path: /**
   upstream: http://httpbin.org
@@ -24,7 +24,7 @@ targets:
 storage:
   kind: InMemory
   specs:
-    stdTTL: 24h
+    stdTTL: 86400 #24h
 server:
   # max_body_limit: 100k
   http:
@@ -46,7 +46,7 @@ server:
   healthchecks:
     readiness: /healthcheck/ready
     liveness: /healthcheck
-    timeout: 2s
+    timeout: 2000 #2sec
 relying_party:
   on_success_redirect: /
   on_fail_redirect: /
