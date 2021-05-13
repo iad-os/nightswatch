@@ -8,31 +8,32 @@ import {
 import get from 'lodash.get';
 import map from 'lodash.map';
 import options, { Targets } from '../config/options';
-import { OidcRequest } from './authenticate';
 
 import debugLib from 'debug';
 const debug = debugLib('nightswatch:rev-proxy');
 
 function revProxy({ upstream, routes, rewrite }: Targets): RequestHandler {
   const proxy_options: Options = {
+    followRedirects: false,
     target: upstream,
+    changeOrigin: true,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     pathRewrite: rewrite.reduce((acc: any, { match, rewrite }) => {
       acc[match] = rewrite;
       return acc;
     }, {}),
     // control logging
-    logLevel: options.snapshot().relying_party.logLevel || 'error',
+    logLevel: 'debug',
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    router: routes.reduce((acc: any, route) => {
-      acc[route.path] = route.upstream;
-      return acc;
-    }, {}),
+    //router: routes.reduce((acc: any, route) => {
+    //  acc[route.path] = route.upstream;
+    //  return acc;
+    //}, {}),
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     onProxyReq: (proxyReq: ClientRequest, req: Request, res: Response) => {
-      const rpHeaders = proxyHeaders(req.oidc!);
+      const rpHeaders = proxyHeaders(req);
       rpHeaders.forEach(([name, value]) => {
         proxyReq.setHeader(name, value);
       });
@@ -49,12 +50,13 @@ function revProxy({ upstream, routes, rewrite }: Targets): RequestHandler {
     },
   };
 
-  function proxyHeaders(oidc: OidcRequest) {
+  function proxyHeaders(req: Request) {
     const { prefix, proxy } = options.snapshot().relying_party.headers;
     return map(proxy, function(value, name) {
-      return [`${prefix}-${name}`, get(oidc, value, '')];
+      return [`${prefix}-${name}`, get(req.oidc, value, '')];
     });
   }
+
   debug(proxy_options);
 
   return createProxyMiddleware(proxy_options);

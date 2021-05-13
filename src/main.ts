@@ -1,63 +1,65 @@
-import express, { Express } from 'express';
-import http from 'http';
-import cors from 'cors';
-import pinoExpress from 'express-pino-logger';
-import cookieSession from 'cookie-session';
-import helmet from 'helmet';
-import revProxy from './middlewares/rev-roxy';
-import authenticateBuilder from './middlewares/authenticate';
-import passport from 'passport';
+import waitOn from 'wait-on';
+import nightswatch from './config/nightswatch';
 import options from './config/options';
-import oidcRouter from './routers/oidc';
-import healthchecks from './healthcheck';
-import logger, { options as pinoOpts } from './utils/logger';
-
-import debugLib from 'debug';
-const debug = debugLib('nightswatch:run');
-
-const app = express();
-prepareServer(app).then(() => {
-  if (options.snapshot().server.http.enable) {
-    const port = options.snapshot().server.http.port;
-    const server = http.createServer(
-      { maxHeaderSize: options.snapshot().server.max_header_size || 8192 },
-      app
-    );
-    healthchecks(server);
-    server.listen(port, function() {
-      logger.info({
-        server: { port },
-        routing: options.snapshot().targets,
-      });
-    });
-  } else {
-    debug('No server config found or enabled');
+import log from './utils/logger';
+(async () => {
+  try {
+    log.info('🔍 Running engineCheck ...');
+    await engineCheck({});
+    log.info('✅ Running engineCheck OK');
+    await start();
+    log.info('✅ Application started');
+  } catch (err) {
+    log.error({ err }, '💥 BAD things happened');
   }
-});
-
-async function prepareServer(app: Express) {
-  app.set('trust proxy', options.snapshot().server.proxy);
-  app.use(helmet());
-  app.use(cors({ credentials: true }));
-  app.use(pinoExpress(pinoOpts));
-  app.use(cookieSession(options.snapshot().cookie));
-  app.use(passport.initialize());
-
-  // mount oidc routes on path (DEFAULT/oidc)
-  app.use(options.snapshot().relying_party.oidc_base_path, oidcRouter);
-
-  const authenticate = await authenticateBuilder();
-
-  options
-    .snapshot()
-    .relying_party.rules.forEach(({ route, methods = ['all'] }) => {
-      methods.forEach(method => {
-        (<any>app)[method](route, authenticate);
-      });
+})();
+//import { name, version, description, repository } from 'package.json';
+//log.info('App Boot info', { name, version, description, repository });
+export async function start(): Promise<void> {
+  // const {} = process.env;
+  try {
+    // await something
+    // once here, all resources are available
+    process.on('SIGINT', async () => {
+      stop();
     });
 
-  app.all(
-    options.snapshot().targets.path,
-    revProxy(options.snapshot().targets)
-  );
+    process.on('SIGTERM', async () => {
+      stop();
+    });
+    await nightswatch.start({ port: 3000 });
+
+    nightswatch.on('shutdown', () => {
+      process.exit(0);
+    });
+    nightswatch.on('signal', () => {
+      options.takeSnapshot();
+    });
+  } catch (err) {
+    log.debug('💥 ops', err);
+    throw err;
+  }
+  // eslint-disable-next-line global-require
 }
+
+async function stop(): Promise<void> {
+  await nightswatch.stop();
+  process.exit();
+}
+export async function engineCheck(options: {
+  waitOpts?: waitOn.WaitOnOptions;
+  envs?: { [name: string]: string };
+}): Promise<void> {
+  try {
+    const { waitOpts, envs = process.env } = options;
+    if (envs.ENV !== 'DEVELOPMENT' && waitOpts) waitOn(waitOpts);
+  } catch (err) {
+    log.error(err);
+    throw err;
+  }
+}
+export default {
+  start,
+  stop,
+  engineCheck,
+};

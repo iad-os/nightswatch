@@ -1,0 +1,13 @@
+version: '3.6'
+services:
+  nightswatch:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    # copy .env.example and uncomment to apply (DO NOT UNCOMMENT IF USING DEV CONTAINERS)
+    # env_file: .env
+    
+    # Uncomment to run outside devcontainer an run it after the start of services `make services`
+    # environment:
+      

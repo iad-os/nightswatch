@@ -1,0 +1,38 @@
+@apiUrl=http://localhost:3000
+@proto=https
+@baseDomain=ecobonus.tk
+@studioPrefix=studio
+
+###
+### TOKEN #######################################################################
+###
+@issuerUrl=https://id.ecobonus.es/auth/realms/dev-operatori
+@ecoApiEndpoint=https://api.ecobonus.es
+@clientId=portale-operatori
+@clientSecret=""
+ 
+###
+# @name passwordGrant
+POST {{issuerUrl}}/protocol/openid-connect/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+ 
+grant_type=password
+&username=demo1.studio
+&password=password
+&client_id={{clientId}}
+&client_secret={{clientSecret}}
+ 
+###
+@accessToken={{passwordGrant.response.body.access_token}}
+@refreshToken={{passwordGrant.response.body.refresh_token}}
+
+###
+@realm=master
+
+// Creazione di un utenza
+# @name createIDs
+# Richiede ruolo "create"
+GET {{apiUrl}}/headers
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+

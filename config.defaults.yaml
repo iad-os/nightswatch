@@ -1,10 +1,32 @@
+#devModes:
+#  oidcSmartIntrospect:
+#    enabled: true
+#    fakeUid:
+#      subject: subject
+#      issuer: issuer
+#      email: a@mail.it
+#      emailVerified: true
+#      token: header.body.signature
+#      roles:
+#        - admin
+#      allRoles:
+#        - ids:admin
+#      audience: ids
+#      expires: 3600
+#      issuedAt: -1
+#      active: true
 oidc:
-  # issuerUri: process.env.OIDC__ISSUERURI,
-  # client_id: process.env.OIDC__CLIENTID,
-  # client_secret: process.env.OIDC__CLIENT_SECRET,
-  # redirect_uri: process.env.OIDC__REDIRECT_URI,
-  scopes: openid profile email offline_access
-
+  issuers:
+  - issuer: https://id.ecobonus.es/auth/realms/dev-gestori
+    introspection_endpoint: https://id.ecobonus.es/auth/realms/dev-gestori/protocol/openid-connect/token/introspect
+    client:
+      client_id: ids-api
+      client_secret: 1e1c513f-1ccb-4c7e-bf12-827948f44f6f
+  - issuer: https://id.ecobonus.es/auth/realms/dev-operatori
+    introspection_endpoint: https://id.ecobonus.es/auth/realms/dev-operatori/protocol/openid-connect/token/introspect
+    client:
+      client_id: ids-api
+      client_secret: d108fed9-8b4a-434a-830f-77b201e06150
 # https://github.com/expressjs/cookie-session
 cookie:
   name: nightswatch

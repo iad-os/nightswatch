@@ -1,16 +1,10 @@
 import ghii from '@ghii/ghii';
 import packageJsonLoader from '@ghii/package-json-loader';
 import yamlLoader from '@ghii/yaml-loader';
+import { IssuerEndpoints } from '@iad-os/aemon-oidc-introspect';
+import { join } from 'lodash';
 import { PackageJson, PartialDeep } from 'type-fest';
 import logger from '../utils/logger';
-
-export interface Oidc {
-  scopes: string;
-  issuerUri: string;
-  client_id: string;
-  client_secret: string;
-  redirect_uri: string;
-}
 
 export interface Targets {
   path: string;
@@ -91,17 +85,28 @@ export interface RelyingParty {
 }
 
 const options = ghii<{
+  mode: 'access-proxy'; //todo 'relying-party' | 'mixed';
   app: PartialDeep<PackageJson> & {
     dbName: string;
   };
   env: 'development' | 'production';
-  oidc: Oidc;
-  cookie: CookieSessionInterfaces.CookieSessionOptions;
+  oidc: {
+    issuers: IssuerEndpoints[];
+  };
+  cookie: CookieSessionInterfaces.CookieSessionOptions; // | 'only-auth-bearer';
   targets: Targets;
   storage: Storage;
   server: Server;
   relying_party: RelyingParty;
 }>()
+  .section('mode', {
+    defaults: 'access-proxy',
+    validator: joi =>
+      joi
+        .string()
+        .allow('access-proxy') //todo 'relying-party' | 'mixed')
+        .required(),
+  })
   .section('app', {
     defaults: {
       name: 'files-api',
@@ -122,19 +127,23 @@ const options = ghii<{
   .section('oidc', {
     validator: joi =>
       joi.object({
-        scopes: joi.string().required(),
-        issuerUri: joi.string().required(),
-        client_id: joi.string().required(),
-        client_secret: joi.string(),
-        redirect_uri: joi.string().required(),
+        issuers: joi.array().items(
+          joi.object({
+            client: joi.object({
+              client_id: joi.string().required(),
+              client_secret: joi.string(),
+            }),
+            introspection_endpoint: joi
+              .string()
+              .uri()
+              .required(),
+            issuer: joi
+              .string()
+              .uri()
+              .required(),
+          })
+        ),
       }),
-    defaults: {
-      scopes: 'openid profile email offline_access',
-      issuerUri: process.env.OIDC__ISSUERURI,
-      client_id: process.env.OIDC__CLIENTID,
-      client_secret: process.env.OIDC__CLIENT_SECRET || undefined,
-      redirect_uri: process.env.OIDC__REDIRECT_URI,
-    },
   })
   .section('cookie', {
     validator: joi =>
