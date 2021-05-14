@@ -1,9 +1,9 @@
 import express from 'express';
-import passport from 'passport';
-import options from '../config/options';
+//import passport from 'passport';
+//import options from '../config/options';
 
 const oidcRouter = express.Router();
-
+/*
 const passportMiddleware = passport.authenticate('openid', {
   session: false,
   successRedirect: options.snapshot().relying_party.on_success_redirect,
@@ -26,5 +26,5 @@ oidcRouter.get(
   `${options.snapshot().relying_party.oidc_paths.callback}`,
   passportMiddleware
 );
-
+*/
 export default oidcRouter;

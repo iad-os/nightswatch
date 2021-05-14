@@ -1,0 +1,18 @@
+@apiUrl=http://localhost:3000
+###
+### TOKEN #######################################################################
+ 
+###
+@accessToken=
+@refreshToken=
+
+###
+@realm=master
+
+// Creazione di un utenza
+# @name createIDs
+# Richiede ruolo "create"
+GET {{apiUrl}}/headers
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+

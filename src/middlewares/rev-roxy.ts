@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { ClientRequest } from 'http';
+import debugLib from 'debug';
+import { Request } from 'express';
 import {
   createProxyMiddleware,
   Options,
@@ -8,21 +8,21 @@ import {
 import get from 'lodash.get';
 import map from 'lodash.map';
 import options, { Targets } from '../config/options';
-import { OidcRequest } from './authenticate';
 
-import debugLib from 'debug';
 const debug = debugLib('nightswatch:rev-proxy');
 
 function revProxy({ upstream, routes, rewrite }: Targets): RequestHandler {
   const proxy_options: Options = {
+    followRedirects: false,
+    changeOrigin: true,
     target: upstream,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    pathRewrite: rewrite.reduce((acc: any, { match, rewrite }) => {
+    pathRewrite: rewrite.reduce((acc, { match, rewrite }) => {
       acc[match] = rewrite;
       return acc;
-    }, {}),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }, {} as any),
     // control logging
-    logLevel: options.snapshot().relying_party.logLevel || 'error',
+    logLevel: 'debug',
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     router: routes.reduce((acc: any, route) => {
@@ -31,30 +31,26 @@ function revProxy({ upstream, routes, rewrite }: Targets): RequestHandler {
     }, {}),
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onProxyReq: (proxyReq: ClientRequest, req: Request, res: Response) => {
-      const rpHeaders = proxyHeaders(req.oidc!);
+    onProxyReq: (proxyReq, req, res) => {
+      options
+        .snapshot()
+        .headers.noProxy?.map(key => proxyReq.removeHeader(key));
+      proxyReq.removeHeader;
+      const rpHeaders = proxyHeaders(req);
       rpHeaders.forEach(([name, value]) => {
         proxyReq.setHeader(name, value);
       });
-
-      /* const { method, path, headers } = proxyReq;
-      if (process.env.TRACE_REQ) {
-        req.log = {
-          method,
-          path,
-          headers,
-          //body: req.body,
-        };
-      }*/
     },
   };
 
-  function proxyHeaders(oidc: OidcRequest) {
-    const { prefix, proxy } = options.snapshot().relying_party.headers;
-    return map(proxy, function(value, name) {
-      return [`${prefix}-${name}`, get(oidc, value, '')];
+  function proxyHeaders(req: Request) {
+    const { prefix, proxy } = options.snapshot().headers;
+    const headers = map(proxy, function(value, name) {
+      return [`${prefix}-${name}`, get(req.uid, value, '')];
     });
+    return headers;
   }
+
   debug(proxy_options);
 
   return createProxyMiddleware(proxy_options);

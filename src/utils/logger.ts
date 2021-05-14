@@ -1,8 +1,9 @@
 import { RequestHandler } from 'express';
 import pino from 'pino';
+import opts from '../config/options';
 
 export const options = {
-  level: process.env.LOG_LEVEL || 'info',
+  level: process.env.LOG_LEVEL || opts.snapshot().logLevel,
   prettyPrint: process.env.PRETTY_PRINT === 'true',
 };
 

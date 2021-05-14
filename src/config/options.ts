@@ -1,16 +1,8 @@
 import ghii from '@ghii/ghii';
 import packageJsonLoader from '@ghii/package-json-loader';
 import yamlLoader from '@ghii/yaml-loader';
+import { IssuerEndpoints } from '@iad-os/aemon-oidc-introspect';
 import { PackageJson, PartialDeep } from 'type-fest';
-import logger from '../utils/logger';
-
-export interface Oidc {
-  scopes: string;
-  issuerUri: string;
-  client_id: string;
-  client_secret: string;
-  redirect_uri: string;
-}
 
 export interface Targets {
   path: string;
@@ -64,20 +56,14 @@ export interface Rule {
 }
 
 export interface Proxy {
-  'access-token': string;
-  'id-token': string;
-  'expires-at': string;
-  'expires-in': string;
-  sub: string;
-  name: string;
-  email: string;
-  'family-name': string;
-  'given-name': string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 export interface Headers {
   prefix: string;
   proxy: Proxy;
+  noProxy: string[];
 }
 
 export interface RelyingParty {
@@ -86,22 +72,32 @@ export interface RelyingParty {
   oidc_base_path: string;
   oidc_paths: OidcPaths;
   rules: Rule[];
-  logLevel: 'debug' | 'info' | 'warn' | 'error' | 'silent';
-  headers: Headers;
 }
 
 const options = ghii<{
+  mode: 'access-proxy'; //todo 'relying-party' | 'mixed';
   app: PartialDeep<PackageJson> & {
     dbName: string;
   };
   env: 'development' | 'production';
-  oidc: Oidc;
-  cookie: CookieSessionInterfaces.CookieSessionOptions;
+  oidc: {
+    issuers: IssuerEndpoints[];
+  };
+  logLevel: 'debug' | 'info' | 'warn' | 'error' | 'silent';
+  headers: Headers;
   targets: Targets;
   storage: Storage;
   server: Server;
-  relying_party: RelyingParty;
+  //relying_party: RelyingParty;
 }>()
+  .section('mode', {
+    defaults: 'access-proxy',
+    validator: joi =>
+      joi
+        .string()
+        .allow('access-proxy') //todo 'relying-party' | 'mixed')
+        .required(),
+  })
   .section('app', {
     defaults: {
       name: 'files-api',
@@ -122,29 +118,44 @@ const options = ghii<{
   .section('oidc', {
     validator: joi =>
       joi.object({
-        scopes: joi.string().required(),
-        issuerUri: joi.string().required(),
-        client_id: joi.string().required(),
-        client_secret: joi.string(),
-        redirect_uri: joi.string().required(),
+        issuers: joi.array().items(
+          joi.object({
+            client: joi.object({
+              client_id: joi.string().required(),
+              client_secret: joi.string(),
+            }),
+            introspection_endpoint: joi
+              .string()
+              .uri()
+              .required(),
+            issuer: joi
+              .string()
+              .uri()
+              .required(),
+          })
+        ),
       }),
-    defaults: {
-      scopes: 'openid profile email offline_access',
-      issuerUri: process.env.OIDC__ISSUERURI,
-      client_id: process.env.OIDC__CLIENTID,
-      client_secret: process.env.OIDC__CLIENT_SECRET || undefined,
-      redirect_uri: process.env.OIDC__REDIRECT_URI,
-    },
   })
-  .section('cookie', {
+  .section('logLevel', {
+    defaults: 'info',
+    validator: joi =>
+      joi
+        .string()
+        .valid('debug', 'info', 'warn', 'error', 'silent')
+        .required(),
+  })
+  .section('headers', {
+    defaults: {
+      prefix: 'X-AUTH',
+    },
     validator: joi =>
       joi.object({
-        name: joi.string().required(),
-        keys: joi
-          .array()
-          .items(joi.string().required())
-          .min(1),
-        maxAge: joi.number().required(),
+        prefix: joi.string(),
+        proxy: joi
+          .object({})
+          .options({ allowUnknown: true })
+          .required(),
+        noProxy: joi.array().items(joi.string()),
       }),
   })
   .section('targets', {
@@ -207,56 +218,6 @@ const options = ghii<{
           liveness: joi.string().required(),
           timeout: joi.number(),
         }),
-      }),
-  })
-  .section('relying_party', {
-    validator: joi =>
-      joi.object({
-        on_success_redirect: joi.string().required(),
-        on_fail_redirect: joi.string().required(),
-        oidc_base_path: joi.string().required(),
-        oidc_paths: joi
-          .object({
-            login: joi.string().required(),
-            callback: joi.string().required(),
-          })
-          .required(),
-        rules: joi
-          .array()
-          .items(
-            joi
-              .object({
-                route: joi.string().required(),
-                methods: joi
-                  .array()
-                  .items(joi.string().required())
-                  .min(1),
-              })
-              .required()
-          )
-          .min(1),
-        logLevel: joi
-          .string()
-          .valid('debug', 'info', 'warn', 'error', 'silent')
-          .required(),
-        headers: joi
-          .object({
-            prefix: joi.string().required(),
-            proxy: joi
-              .object({
-                'access-token': joi.string().required(),
-                'id-token': joi.string().required(),
-                'expires-at': joi.string().required(),
-                'expires-in': joi.string().required(),
-                sub: joi.string().required(),
-                name: joi.string().required(),
-                email: joi.string().required(),
-                'family-name': joi.string().required(),
-                'given-name': joi.string().required(),
-              })
-              .required(),
-          })
-          .required(),
       }),
   })
   .loader(packageJsonLoader({ target: 'app' }));

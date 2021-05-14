@@ -26,19 +26,14 @@
 The following is the default configuration; you can use it to create your own `Night's Watch` configuration.
 
 ```yaml
+mode: access-proxy # only access-proxy
 oidc:
-  issuerUri: https://issuer.castle_black.com
-  client_id: the_wall
-  client_secret: the_key_of_the_wall
-  redirect_uri: https://north.7kingdoms.com/oidc/callback
-  scopes: openid profile email offline_access
+  - issuer: https://issuer.castle_black.com
+  introspection_endpoint: https://issuer.castle_black.com/introspect
+    client:
+      client_id: the_wall
+      client_secret: the_key_of_the_wall
 
-# https://github.com/expressjs/cookie-session
-cookie:
-  name: nightswatch
-  keys:
-    - you_know_nothing_jon_snow
-  maxAge: 24h
 targets:
   path: /**
   upstream: http://httpbin.org
@@ -52,7 +47,7 @@ targets:
 storage:
   kind: InMemory
   specs:
-    stdTTL: 24h
+    stdTTL: 86400
 server:
   # max_body_limit: 100k
   http:
@@ -76,31 +71,23 @@ server:
   healthchecks:
     readiness: /healthcheck/ready
     liveness: /healthcheck
-    timeout: 2s
-relying_party:
-  on_success_redirect: /
-  on_fail_redirect: /
-  oidc_base_path: /oidc
-  oidc_paths:
-    login: /login
-    callback: /callback
-  rules:
-    - route: /**
-      methods:
-        - all
-  logLevel: error
-  headers:
-    prefix: X-AUTH
-    proxy:
-      access-token: tokenset.access_token
-      id-token: tokenset.id_token
-      expires-at: tokenset.expires_at
-      expires-in: tokenset.expires_in
-      sub: idtoken.sub
-      name: idtoken.name
-      email: idtoken.email
-      family-name: idtoken.family_name
-      given-name: idtoken.given_name
+    timeout: 2000
+
+logLevel: error
+headers:
+  prefix: X-AUTH
+  proxy:
+    access-token: tokenset.access_token
+    id-token: tokenset.id_token
+    expires-at: tokenset.expires_at
+    expires-in: tokenset.expires_in
+    sub: idtoken.sub
+    name: idtoken.name
+    email: idtoken.email
+    family-name: idtoken.family_name
+    given-name: idtoken.given_name
+  noProxy:
+    - authorization
 ```
 
 All of the options can be provided as ENVIRONMENT variables by applying this rule:
