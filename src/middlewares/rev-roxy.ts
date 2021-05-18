@@ -5,6 +5,7 @@ import {
   Options,
   RequestHandler,
 } from 'http-proxy-middleware';
+import { toString } from 'lodash';
 import get from 'lodash.get';
 import map from 'lodash.map';
 import options, { Targets } from '../config/options';
@@ -46,7 +47,7 @@ function revProxy({ upstream, routes, rewrite }: Targets): RequestHandler {
   function proxyHeaders(req: Request) {
     const { prefix, proxy } = options.snapshot().headers;
     const headers = map(proxy, function(value, name) {
-      return [`${prefix}-${name}`, get(req.uid, value, '')];
+      return [`${prefix}-${name}`, toString(get(req.uid, value, ''))];
     });
     return headers;
   }
