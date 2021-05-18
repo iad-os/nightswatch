@@ -1,0 +1,22 @@
+version: '3.6'
+
+services:
+  opa:
+    image: openpolicyagent/opa
+    restart: unless-stopped
+    command:
+      - run
+      - --server
+      - --log-level
+      - debug
+      - --log-format
+      - json-pretty
+      # - --set=decision_logs.console=true
+      - --watch
+      - --bundle
+      - /bundles
+      - --config-file
+      - /config.yaml
+    volumes:
+      - ./policy/bundle:/bundles
+      - ./policy/config.yaml:/config.yaml:ro  

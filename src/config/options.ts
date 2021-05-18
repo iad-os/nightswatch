@@ -83,6 +83,10 @@ const options = ghii<{
   oidc: {
     issuers: IssuerEndpoints[];
   };
+  admissionControl?: {
+    url: string;
+    dryRun: { enabled: boolean; header: string };
+  };
   logLevel: 'debug' | 'info' | 'warn' | 'error' | 'silent';
   headers: Headers;
   targets: Targets;
@@ -134,6 +138,16 @@ const options = ghii<{
               .required(),
           })
         ),
+      }),
+  })
+  .section('admissionControl', {
+    validator: joi =>
+      joi.object({
+        dryRun: {
+          enabled: joi.boolean(),
+          header: joi.string().case('lower'),
+        },
+        url: joi.string().uri(),
       }),
   })
   .section('logLevel', {

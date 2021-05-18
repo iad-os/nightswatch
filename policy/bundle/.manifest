@@ -1,0 +1,8 @@
+{
+  "roots": [
+    "headers",
+    "roles",
+    "policies",
+    "http"
+  ]
+}

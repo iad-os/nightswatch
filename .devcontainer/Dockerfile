@@ -4,6 +4,7 @@ ARG VARIANT="14"
 
 FROM io.iad2.cloud/devtools/ts-node-docker:${VARIANT}
 
+RUN curl -L -o opa "https://openpolicyagent.org/downloads/latest/opa_linux_amd64" && chmod 755 ./opa && mv ./opa  /usr/local/bin/opa
 
 WORKDIR /workspace
 

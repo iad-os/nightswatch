@@ -1,0 +1,13 @@
+services: {}
+
+labels:
+  app: nightswatch
+  region: local
+  environment: development
+
+bundles: {}
+
+decision_logs:
+  console: true
+
+default_decision: /eco/authz/allow

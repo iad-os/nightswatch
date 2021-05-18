@@ -25,6 +25,12 @@ oidc:
       client_id: the_wall
       client_secret: the_key_of_the_wall
 
+admissionControl:
+  url: http://opa:8181/v1/data
+  dryRun:
+    enabled: true
+    header: 'x-authorizer'
+
 targets:
   path: /**
   upstream: http://httpbin.org

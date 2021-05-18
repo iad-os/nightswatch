@@ -5,6 +5,7 @@
   "dockerComposeFile": [
     "../docker-compose.yml",
     "docker-compose.yml",
+    "../docker-compose-services.yml"
   ],
   "service": "nightswatch",
   "workspaceFolder": "/workspace",
@@ -35,7 +36,8 @@
 	"esbenp.prettier-vscode",
 	"visualstudioexptteam.vscodeintellicode",
 	"ms-vscode.vscode-typescript-tslint-plugin",
-	"pflannery.vscode-versionlens"
+	"pflannery.vscode-versionlens",
+  "tsandall.opa",
 ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   "forwardPorts": [3000]
