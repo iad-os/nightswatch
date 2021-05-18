@@ -11,6 +11,10 @@ import axios from 'axios';
 import pinoExpress from 'express-pino-logger';
 import revProxy from '../middlewares/rev-roxy';
 import jorah from './jorah';
+import {
+  defaultMiddleware,
+  errorResponseMiddleware,
+} from '../utils/errorsMiddleware';
 
 const expressApp = express()
   .set('trust proxy', opts.snapshot().server.proxy)
@@ -30,6 +34,8 @@ expressApp.use((req, res, next) => {
 
 expressApp.all(opts.snapshot().targets.path, revProxy(opts.snapshot().targets));
 
+expressApp.use(defaultMiddleware).use(errorResponseMiddleware);
+
 export default new Nightswatch({
   requestListener: expressApp,
   delayShutdown: 10,
@@ -44,6 +50,7 @@ function instrumentByMode(expressApp: Express) {
       expressApp
         .use(
           aemonOidcIntrospect({
+            devMode: opts.snapshot().devModes?.oidcSmartIntrospect,
             issuers: opts.snapshot().oidc.issuers,
             extractToken: req => {
               // Bearer token example (Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c)
@@ -58,7 +65,7 @@ function instrumentByMode(expressApp: Express) {
             logger: (req, level, msg, payload) => logger[level](msg, payload),
           })
         )
-        .use(jorah({}));
+        .use(jorah());
       break;
 
     default:

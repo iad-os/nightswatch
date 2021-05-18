@@ -3,13 +3,17 @@ package headers
 
 default allow = false
 
-hasAdmin {
-	contains(input.me.roules, "admin")
+has{
+	contains(input.uid.roles, "pippo")
 }
 
 allow {
-  input.uid.email == "nikola.vurchio@iad2.it"
+  has
   contains(["GET"], input.req.method)
+}
+
+hasAdmin{
+  contains(input.uid.roles, "admin")
 }
 
 allow {

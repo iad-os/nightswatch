@@ -1,7 +1,7 @@
 import ghii from '@ghii/ghii';
 import packageJsonLoader from '@ghii/package-json-loader';
 import yamlLoader from '@ghii/yaml-loader';
-import { IssuerEndpoints } from '@iad-os/aemon-oidc-introspect';
+import { Identity, IssuerEndpoints } from '@iad-os/aemon-oidc-introspect';
 import { PackageJson, PartialDeep } from 'type-fest';
 
 export interface Targets {
@@ -92,7 +92,12 @@ const options = ghii<{
   targets: Targets;
   storage: Storage;
   server: Server;
-  //relying_party: RelyingParty;
+  devModes: {
+    oidcSmartIntrospect: {
+      enabled: true;
+      fakeUid: Identity;
+    };
+  };
 }>()
   .section('mode', {
     defaults: 'access-proxy',
@@ -232,6 +237,15 @@ const options = ghii<{
           liveness: joi.string().required(),
           timeout: joi.number(),
         }),
+      }),
+  })
+  .section('devModes', {
+    validator: joi =>
+      joi.object({
+        oidcSmartIntrospect: {
+          enabled: joi.boolean(),
+          fakeUid: joi.object().options({ allowUnknown: true }),
+        },
       }),
   })
   .loader(packageJsonLoader({ target: 'app' }));

@@ -28,7 +28,7 @@ oidc:
 admissionControl:
   url: http://opa:8181/v1/data
   dryRun:
-    enabled: true
+    enabled: false
     header: 'x-authorizer'
 
 targets:
@@ -99,3 +99,23 @@ headers:
 #    - route: /**
 #      methods:
 #        - all
+
+
+devModes:
+  oidcSmartIntrospect:
+    enabled: true
+    fakeUid:
+      subject: subject
+      issuer: issuer
+      email: a@mail.it
+      emailVerified: true
+      token: header.body.signature
+      roles:
+        - pippo
+      allRoles:
+        - fff:admin
+      audience: fff
+      expires: 3600
+      issuedAt: -1
+      active: true
+

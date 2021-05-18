@@ -4,6 +4,8 @@ import jorahPolicyMiddleware, {
 import axios from 'axios';
 import { RequestHandler } from 'express';
 import httpStatus from 'http-status';
+import ErrorResponse from '../utils/ErrorResponse';
+import logger from '../utils/logger';
 import opts from './options';
 
 const _default: OpaMiddlewareOptions = {
@@ -11,11 +13,9 @@ const _default: OpaMiddlewareOptions = {
     return await axios.create().post(url, data, options);
   },
   onDecision: (req, res, next) => {
-    if (req.policyEvaluation.decision?.result?.allow) {
-      next();
-      return;
-    }
-    res.status(httpStatus.FORBIDDEN).send(`OPA-POLICY - FORBIDDEN`);
+    req.policyEvaluation.decision?.result?.allow
+      ? next()
+      : next(new ErrorResponse(httpStatus.FORBIDDEN, `OPA-POLICY - FORBIDDEN`));
   },
   decisionPath: req => {
     return `/${req.path.split('/')[1]}`;
@@ -32,12 +32,13 @@ const _default: OpaMiddlewareOptions = {
       },
     },
   }),
+  logger: (req, level, msg, payload) => logger[level](msg, payload),
 };
 
-const jorah = (options: OpaMiddlewareOptions): RequestHandler => {
+const jorah = (options?: OpaMiddlewareOptions): RequestHandler => {
   const config = opts.snapshot().admissionControl;
   if (config) {
-    return jorahPolicyMiddleware(config, _default)(options);
+    return jorahPolicyMiddleware(config, _default)(options || {});
   }
   return async function(req, res, next) {
     next();

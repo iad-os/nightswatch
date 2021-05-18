@@ -9,10 +9,21 @@
 ###
 @realm=master
 
-// Creazione di un utenza
-# @name createIDs
-# Richiede ruolo "create"
+#
+# @name GET
+# 
 GET {{apiUrl}}/headers
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
+###
+
+#
+# @name POST
+# 
+POST {{apiUrl}}/headers
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{}
+###
