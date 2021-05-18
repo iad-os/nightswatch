@@ -103,7 +103,7 @@ headers:
 
 devModes:
   oidcSmartIntrospect:
-    enabled: true
+    enabled: false
     fakeUid:
       subject: subject
       issuer: issuer
