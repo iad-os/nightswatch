@@ -1,6 +1,4 @@
 const express = require('express');
-const debug = require('debug')('session:api');
-const httpStatus = require('http-status');
 const passport = require('passport');
 const { relying_party } = require('../conf');
 

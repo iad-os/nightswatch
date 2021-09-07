@@ -1,6 +1,6 @@
 {
   "name": "nightswatch",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Night's Watch, the OIDC Relying Party that guards the realms",
   "main": "src/index.js",
   "scripts": {
@@ -15,41 +15,41 @@
     "email": "danielefiungo@gmail.com"
   },
   "engines": {
-    "node": ">=12",
+    "node": ">=14",
     "npm": ">=6.4.1"
   },
   "license": "MIT",
   "dependencies": {
-    "@godaddy/terminus": "^4.3.1",
+    "@godaddy/terminus": "^4.9.0",
     "body-parser": "^1.19.0",
     "cookie-session": "^1.4.0",
     "cors": "^2.8.5",
-    "debug": "^4.1.1",
-    "dotenv": "^8.2.0",
+    "debug": "^4.3.2",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "helmet": "^3.21.2",
-    "http-proxy-middleware": "^1.0.0",
-    "http-status": "^1.4.2",
-    "js-yaml": "^3.13.1",
+    "helmet": "^4.6.0",
+    "http-proxy-middleware": "^2.0.1",
+    "http-status": "^1.5.0",
+    "js-yaml": "^4.1.0",
     "lodash.get": "^4.4.2",
     "lodash.map": "^4.6.0",
     "lodash.merge": "^4.6.2",
     "lodash.set": "^4.3.2",
     "lodash.tonumber": "^4.0.3",
-    "node-cache": "^5.1.0",
-    "openid-client": "^3.13.0",
-    "parse-duration": "^0.1.2",
+    "node-cache": "^5.1.2",
+    "openid-client": "^4.7.5",
+    "parse-duration": "^1.0.0",
     "passport": "^0.4.1",
-    "pino": "^5.16.0",
+    "pino": "^6.13.2",
     "pino-express": "^1.1.1",
-    "shortid": "^2.2.15"
+    "shortid": "^2.2.16"
   },
   "devDependencies": {
-    "@types/cookie-session": "^2.0.38",
-    "@types/pino": "^5.15.5",
-    "cross-env": "^7.0.0",
-    "nodemon": "^2.0.2",
-    "pino-pretty": "^3.6.0",
-    "prettier": "1.19.1"
+    "@types/cookie-session": "^2.0.43",
+    "@types/pino": "^6.3.11",
+    "cross-env": "^7.0.3",
+    "nodemon": "^2.0.12",
+    "pino-pretty": "^6.0.0",
+    "prettier": "2.3.2"
   }
 }

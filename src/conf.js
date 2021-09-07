@@ -1,4 +1,4 @@
-const duration = require('parse-duration');
+const {default: duration} = require('parse-duration');
 const yaml = require('js-yaml');
 const fs = require('fs');
 const set = require('lodash.set');
@@ -114,13 +114,12 @@ const debug = require('debug')('nightswatch:conf');
  * @property {Relying_party} [relying_party]
  */
 
-const defaultsConfig = yaml.safeLoad(
+const defaultsConfig = yaml.load(
   fs.readFileSync('./src/config.defaults.yaml', 'utf8')
 );
-const userConf =
-  fs.existsSync(process.env.CONFIG_FILE || './config.yaml') &&
-  yaml.safeLoad(
-    fs.readFileSync(process.env.CONFIG_FILE || './config.yaml', 'utf8')
+if(!fs.existsSync(process.env.CONFIG_FILE || './config.yaml') )  throw new Error(`${process.env.CONFIG_FILE || './config.yaml'} not found`);
+const userConf = yaml.load(
+    fs.readFileSync(process.env.CONFIG_FILE || './config.yaml', 'utf8') 
   );
 
 /**
@@ -186,6 +185,7 @@ function configurator(defaultsConfig, ...configurations) {
     const stringValue = get(extConfs, propPath);
     set(extConfs, propPath, toNum(stringValue));
   }
+
 
   function inRange(propPath, min, max) {
     const numberValue = get(extConfs, propPath);

@@ -1,11 +1,11 @@
 # Stage-1 dependencies
-FROM mhart/alpine-node:12 as deps
+FROM node:14-alpine as deps
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --prod
 
 # Stage-2 final image
-FROM mhart/alpine-node:slim-12
+FROM node:14-alpine
 # Create app directory
 WORKDIR /app
 COPY --from=deps /app .
